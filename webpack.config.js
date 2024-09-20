@@ -3,69 +3,68 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const webpack = require("webpack");
 
-module.exports = {
-  entry: {
-    bundle : "./src/index.js",
-  },
-  mode: "development", // Change to 'production' for production builds
-  output: {
-    path: path.resolve(__dirname, "build"),
-    filename: '[name].[contenthash:8].js',
-  },
-  target: "web",
-  devServer: {
-    port: "5000",
-    static: {
-      directory: path.join(__dirname, "public"),
+module.exports = (env) => {
+  const isEnvDevelopment = env === "development";
+  return {
+    entry: {
+      bundle: "./src/index.js",
     },
-    open: true,
-    hot: true,
-    liveReload: true,
-  },
-  resolve: {
-    extensions: [".js", ".jsx", ".json"],
-    alias: {
-      "@": path.resolve(__dirname, "src"), 
+    output: {
+      path: path.resolve(__dirname, "build"),
+      filename: "[name].[contenthash:8].js",
     },
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: "babel-loader",
+    mode: isEnvDevelopment ? "development" : "production",
+    target: "web",
+    devServer: {
+      port: "5000",
+      static: {
+        directory: path.join(__dirname, "public"),
       },
-      {
-        test: /\.css$/,
-        use: [
-          "style-loader", // Injects styles into DOM
-          "css-loader",   // Resolves @import and url()
-          "postcss-loader", // Processes CSS with PostCSS
-        ],
+      open: true,
+      hot: true,
+      liveReload: true,
+      historyApiFallback: true,
+    },
+    resolve: {
+      extensions: [".js", ".jsx", ".json"],
+      alias: {
+        "@": path.resolve(__dirname, "src"),
       },
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
+          use: "babel-loader",
+        },
+        {
+          test: /\.css$/,
+          use: [
+            "style-loader", // Injects styles into DOM
+            "css-loader", // Resolves @import and url()
+            "postcss-loader", // Processes CSS with PostCSS
+          ],
+        },
+      ],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: "Transcoding App",
+        template: path.join(__dirname, "public", "index.html"),
+      }),
     ],
-  },
-  devServer: {
-    historyApiFallback: true,
-},
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "public", "index.html"),
-    }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    })
-  ],
-  optimization: {
-    splitChunks: {
-      chunks: "all",
-      cacheGroups: {
-        vendor: {
-          test: /node_modules/,
-          name: "vendor",
-          chunks: "all",
+    optimization: {
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          vendor: {
+            test: /node_modules/,
+            name: "vendor",
+            chunks: "all",
+          },
         },
       },
     },
-  },
+  };
 };

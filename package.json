@@ -4,8 +4,8 @@
   "description": "video transcoding application",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --serve",
-    "build": "NODE_ENV=production npm run clean && webpack -p" ,
+    "start": "webpack serve --mode=development --serve",
+    "build": "npm run clean && webpack --mode=production" ,
     "clean": "rimraf build"
   },
   "author": "Anuj Sharma",
