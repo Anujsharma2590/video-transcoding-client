@@ -8,10 +8,12 @@ import MaxWidthWrapper from "./MaxWidthWrapper.jsx";
 import VideoDetails from "./components/AllVideosPage/VideoDetails.jsx";
 import { AuthProvider } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute";
+import { Toaster } from "sonner"; // Import Toaster from sonner
 
 const App = () => {
   return (
     <AuthProvider>
+      <Toaster position="top-center" richColors />
       <Layout>
         <Routes>
           {/* Public route */}

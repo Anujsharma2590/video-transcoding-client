@@ -3,11 +3,12 @@ import { AuthContext } from "../AuthContext";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "../ui/Button";
 import MaxWidthWrapper from "../MaxWidthWrapper";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const COGNITO_LOGIN_URL = process.env.REACT_APP_COGNITO_LOGIN_URL || "";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, logout, login } = useContext(AuthContext);
 
   return (
     <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
@@ -20,7 +21,7 @@ const Navbar = () => {
           <div className="hidden items-center space-x-4 sm:flex">
             {!isAuthenticated ? (
               <>
-                <a
+                {/* <a
                   href="/pricing"
                   className={buttonVariants({
                     variant: "ghost",
@@ -28,7 +29,7 @@ const Navbar = () => {
                   })}
                 >
                   Pricing
-                </a>
+                </a> */}
                 {/* Sign in (Cognito) */}
                 <a
                   href={COGNITO_LOGIN_URL}
@@ -51,24 +52,32 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <a
-                  href="/dashboard"
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  Dashboard
-                </a>
-                <button
-                  onClick={logout}
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  Logout
-                </button>
+                <div className="flex items-center space-x-4">
+                  {user && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-medium text-gray-600">
+                        {user.email}
+                      </span>
+                      {/* Avatar */}
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={user.profile_image_url || ""}
+                          alt={user.email}
+                        />
+                        <AvatarFallback>{user.email[0]}</AvatarFallback>
+                      </Avatar>
+                    </div>
+                  )}
+                  <button
+                    onClick={logout}
+                    className={buttonVariants({
+                      variant: "ghost",
+                      size: "sm",
+                    })}
+                  >
+                    Logout
+                  </button>
+                </div>
               </>
             )}
           </div>

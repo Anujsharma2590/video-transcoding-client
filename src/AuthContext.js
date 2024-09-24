@@ -1,5 +1,7 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import axios from "axios";
 
 // Create the AuthContext
 export const AuthContext = createContext();
@@ -8,54 +10,108 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if tokens are already in localStorage
-    const accessToken = localStorage.getItem("access_token");
-    const idToken = localStorage.getItem("id_token");
+    const initializeAuth = async () => {
+      // Check if tokens are already in localStorage
+      const accessToken = localStorage.getItem("access_token");
+      const idToken = localStorage.getItem("id_token");
 
-    if (accessToken && idToken) {
-      setIsAuthenticated(true);
-
-      setIsLoading(false);
-    } else {
-      // Try to extract tokens from URL hash after Cognito redirect
-      const hash = window.location.hash;
-      if (hash) {
-        const params = new URLSearchParams(hash.substring(1));
-        const newAccessToken = params.get("access_token");
-        const newIdToken = params.get("id_token");
-
-        if (newAccessToken && newIdToken) {
-          // Store the tokens in localStorage
-          localStorage.setItem("access_token", newAccessToken);
-          localStorage.setItem("id_token", newIdToken);
-
-          // Set authentication state
+      if (accessToken && idToken) {
+        // If tokens are present, attempt to fetch user profile
+        try {
+          await fetchUserProfile(idToken);
           setIsAuthenticated(true);
-
-          // Remove hash from the URL to clean up
-          window.history.replaceState(null, null, " ");
+          setIsLoading(false);
+        } catch (error) {
+          console.error("Error fetching user profile on reload:", error);
+          logout(); // If fetching profile fails, log out
         }
+      } else {
+        // Try to extract tokens from URL hash after Cognito redirect
+        const hash = window.location.hash;
+        if (hash) {
+          const params = new URLSearchParams(hash.substring(1));
+          const newAccessToken = params.get("access_token");
+          const newIdToken = params.get("id_token");
+
+          if (newAccessToken && newIdToken) {
+            // Store the tokens in localStorage
+            localStorage.setItem("access_token", newAccessToken);
+            localStorage.setItem("id_token", newIdToken);
+
+            // Fetch user profile after login
+            fetchUserProfile(newIdToken)
+              .then(() => {
+                setIsAuthenticated(true);
+                toast.success("Login successful!");
+                window.history.replaceState(
+                  null,
+                  null,
+                  window.location.pathname
+                ); // Clean the URL
+              })
+              .catch((error) => {
+                console.error("Error fetching user profile on login:", error);
+                logout();
+              });
+          }
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    }
+    };
+
+    initializeAuth();
   }, [navigate]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // Function to fetch user profile using access token
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/users/profile/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the token in Authorization header
+          },
+        }
+      );
+      setUser(response.data); // Set user data in state
+    } catch (error) {
+      throw new Error("Failed to fetch user profile");
+    }
+  };
 
   const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("id_token");
     setIsAuthenticated(false);
-    navigate("/"); // Redirect to home or login page after logout
+    setUser(null);
+    navigate("/");
+
+    // Show success toast on logout
+    toast.success("Logged out successfully!");
   };
 
+  const login = (newAccessToken, newIdToken) => {
+    // Store tokens in localStorage
+    localStorage.setItem("access_token", newAccessToken);
+    localStorage.setItem("id_token", newIdToken);
+
+    // Fetch user profile after login
+    fetchUserProfile(newIdToken).then(() => {
+      setIsAuthenticated(true);
+      toast.success("Login successful!");
+    });
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Show loading state while checking local storage
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, logout, login }}>
       {children}
     </AuthContext.Provider>
   );
