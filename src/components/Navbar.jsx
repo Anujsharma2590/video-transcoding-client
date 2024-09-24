@@ -64,7 +64,9 @@ const Navbar = () => {
                           src={user.profile_image_url || ""}
                           alt={user.email}
                         />
-                        <AvatarFallback>{user.email[0]}</AvatarFallback>
+                        <AvatarFallback>
+                          {user.email[0].toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                     </div>
                   )}

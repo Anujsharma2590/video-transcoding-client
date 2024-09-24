@@ -13,6 +13,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  const API_BASE_URL =
+    process.env.REACT_APP_API_BASE_URL || "http://localhost:3000";
+
   useEffect(() => {
     const initializeAuth = async () => {
       // Check if tokens are already in localStorage
@@ -70,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   const fetchUserProfile = async (token) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/users/profile/",
+        `${API_BASE_URL}/api/v1/users/profile/`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Pass the token in Authorization header
