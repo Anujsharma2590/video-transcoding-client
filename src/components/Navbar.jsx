@@ -4,10 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "../ui/Button";
 import MaxWidthWrapper from "../MaxWidthWrapper";
 
-// Cognito login URL
-const COGNITO_LOGIN_URL = `https://user-pool-testingg.auth.us-east-1.amazoncognito.com/login?client_id=61e0mbq3r7tsioofo5pc5pgusk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:5000`;
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
+
+  const COGNITO_LOGIN_URL = process.env.REACT_APP_COGNITO_LOGIN_URL;
 
   return (
     <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
