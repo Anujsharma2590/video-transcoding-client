@@ -2,6 +2,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const webpack = require("webpack");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = (env) => {
   const isEnvDevelopment = env === "development";
@@ -14,7 +15,7 @@ module.exports = (env) => {
       filename: "[name].[contenthash:8].js",
     },
     mode: isEnvDevelopment ? "development" : "production",
-    
+
     target: "web",
     devServer: {
       port: "5000",
@@ -54,6 +55,7 @@ module.exports = (env) => {
         title: "Transcoding App",
         template: path.join(__dirname, "public", "index.html"),
       }),
+      new Dotenv(),
     ],
     optimization: {
       splitChunks: {

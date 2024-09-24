@@ -4,10 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "../ui/Button";
 import MaxWidthWrapper from "../MaxWidthWrapper";
 
+const COGNITO_LOGIN_URL = process.env.REACT_APP_COGNITO_LOGIN_URL || "";
+
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
-
-  const COGNITO_LOGIN_URL = process.env.REACT_APP_COGNITO_LOGIN_URL;
 
   return (
     <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
