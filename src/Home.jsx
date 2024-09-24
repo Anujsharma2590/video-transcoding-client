@@ -1,5 +1,5 @@
 import React from "react";
-import MaxWidthWrapper from "./NaxWidthWrapper";
+import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/Button";
 import { ArrowRight } from "lucide-react";
 
@@ -25,10 +25,12 @@ const Home = () => {
           className={buttonVariants({
             size: "lg",
             className: "mt-5",
+            
           })}
           href="/dashboard"
           target="_blank"
           rel="noopener noreferrer"
+
         >
           Get started <ArrowRight className="ml-2 h-5 w-5" />
         </a>

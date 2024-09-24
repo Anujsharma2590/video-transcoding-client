@@ -14,6 +14,7 @@ module.exports = (env) => {
       filename: "[name].[contenthash:8].js",
     },
     mode: isEnvDevelopment ? "development" : "production",
+    
     target: "web",
     devServer: {
       port: "5000",

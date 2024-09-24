@@ -1,19 +1,24 @@
-import { Card } from "../../ui/Card"; // Assuming you're using shadcn's Card
+import { Card } from "../../ui/Card";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-export function VideoCard({ title, thumbnail, uploader }) {
+export function VideoCard({ title, thumbnail, uploader, id}) {
+  const navigate = useNavigate();
+console.log(id)
+  const handleCardClick = () => {
+    navigate(`/video/${id}`);
+  };
   return (
-    <Card className="w-48 sm:w-60 md:w-72 lg:w-80 flex flex-col items-center p-4 gap-2">
-      {/* Thumbnail (image of the video) */}
+    <Card className="w-full max-w-xs rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out hover:cursor-pointer"  onClick={handleCardClick}>
       <img
         src={thumbnail}
         alt={title}
-        className="w-full h-36 object-cover rounded-md"
+        className="w-full h-48 object-cover rounded-t-lg"
       />
-      {/* Video title */}
-      <h3 className="text-base font-semibold text-center">{title}</h3>
-      {/* Optional uploader's name */}
-      {uploader && <p className="text-sm text-muted-foreground">{uploader}</p>}
+      <div className="p-4 flex flex-col items-start">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        {uploader && <p className="text-sm text-muted-foreground">{uploader}</p>}
+      </div>
     </Card>
   );
 }
