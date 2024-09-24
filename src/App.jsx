@@ -1,13 +1,13 @@
-import React from 'react';
-import Layout from './Layout.jsx';
-import Home from './Home.jsx';
-import { Route, Routes } from 'react-router-dom';
-import VideoUpload from './VideoUpload.jsx';
-import { Dashboard } from './components/AllVideosPage/Dashboard.jsx';
-import MaxWidthWrapper from './MaxWidthWrapper.jsx';
-import VideoDetails from './components/AllVideosPage/VideoDetails.jsx';
-import { AuthProvider } from './AuthContext'; // Import AuthProvider
-import PrivateRoute from './PrivateRoute'; // Import PrivateRoute
+import React from "react";
+import Layout from "./Layout.jsx";
+import Home from "./Home.jsx";
+import { Route, Routes } from "react-router-dom";
+import VideoUpload from "./VideoUpload.jsx";
+import { Dashboard } from "./components/AllVideosPage/Dashboard.jsx";
+import MaxWidthWrapper from "./MaxWidthWrapper.jsx";
+import VideoDetails from "./components/AllVideosPage/VideoDetails.jsx";
+import { AuthProvider } from "./AuthContext";
+import PrivateRoute from "./PrivateRoute";
 
 const App = () => {
   return (

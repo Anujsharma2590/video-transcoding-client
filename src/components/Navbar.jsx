@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../AuthContext';
-import { ArrowRight } from 'lucide-react';
-import { buttonVariants } from '../ui/Button';
-import MaxWidthWrapper from '../MaxWidthWrapper';
+import React, { useContext } from "react";
+import { AuthContext } from "../AuthContext";
+import { ArrowRight } from "lucide-react";
+import { buttonVariants } from "../ui/Button";
+import MaxWidthWrapper from "../MaxWidthWrapper";
 
 // Cognito login URL
-const COGNITO_LOGIN_URL = `https://user-pool-testingg.auth.us-east-1.amazoncognito.com/login?client_id=61e0mbq3r7tsioofo5pc5pgusk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:5000`
+const COGNITO_LOGIN_URL = `https://user-pool-testingg.auth.us-east-1.amazoncognito.com/login?client_id=61e0mbq3r7tsioofo5pc5pgusk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:5000`;
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
 
@@ -14,7 +14,7 @@ const Navbar = () => {
       <MaxWidthWrapper>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
           <a href="/" className="flex z-40 font-semibold">
-            <span>quill.</span>
+            <img src="/logo.gif" alt="loading..." width="100" height={100} />
           </a>
 
           <div className="hidden items-center space-x-4 sm:flex">
@@ -23,8 +23,8 @@ const Navbar = () => {
                 <a
                   href="/pricing"
                   className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
+                    variant: "ghost",
+                    size: "sm",
                   })}
                 >
                   Pricing
@@ -33,8 +33,8 @@ const Navbar = () => {
                 <a
                   href={COGNITO_LOGIN_URL}
                   className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
+                    variant: "ghost",
+                    size: "sm",
                   })}
                 >
                   Sign in
@@ -43,7 +43,7 @@ const Navbar = () => {
                 <a
                   href={COGNITO_LOGIN_URL}
                   className={buttonVariants({
-                    size: 'sm',
+                    size: "sm",
                   })}
                 >
                   Get started <ArrowRight className="ml-1.5 h-5 w-5" />
@@ -54,8 +54,8 @@ const Navbar = () => {
                 <a
                   href="/dashboard"
                   className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
+                    variant: "ghost",
+                    size: "sm",
                   })}
                 >
                   Dashboard
@@ -63,8 +63,8 @@ const Navbar = () => {
                 <button
                   onClick={logout}
                   className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
+                    variant: "ghost",
+                    size: "sm",
                   })}
                 >
                   Logout
