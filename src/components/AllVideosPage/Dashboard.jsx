@@ -1,5 +1,5 @@
 import { File, ListFilter, PlusCircle, Search } from "lucide-react";
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -20,99 +20,7 @@ import { ScrollArea } from "../../ui/scroll-area";
 import VideoUpload from "../../VideoUpload";
 import { UploadModal } from "../UploadModal";
 import TranscodeJobs from "./TranscodeJobs";
-
-const videos = [
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Thinking Components",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Lena Logic",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Functional Fury",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Beth Binary",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "React Rendezvous",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Ethan Byte",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Stateful Symphony",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Beth Binary",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Async Awakenings",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Nina Netcode",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "React Rendezvous",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Ethan Byte",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Stateful Symphony",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Beth Binary",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Async Awakenings",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Nina Netcode",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Functional Fury",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Beth Binary",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "React Rendezvous",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Ethan Byte",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Stateful Symphony",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Beth Binary",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Async Awakenings",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Nina Netcode",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "React Rendezvous",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Ethan Byte",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Stateful Symphony",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Beth Binary",
-  },
-  {
-    video_code: "vid_8aw60vpl",
-    title: "Async Awakenings",
-    thumbnail: "https://picsum.photos/300/200",
-    uploader: "Nina Netcode",
-  },
-];
+import api from "../../api.js";
 
 const jobsData = {
   count: 2,
@@ -154,6 +62,25 @@ const jobsData = {
 
 export function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch videos from API
+    const fetchVideos = async () => {
+      try {
+        const response = await api.get("/video/fetch");
+        const fetchedVideos = response.data.video || [];
+        setVideos(fetchedVideos);
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -226,35 +153,44 @@ export function Dashboard() {
                   Your personal playlists. Updated daily.
                 </p>
 
-                {/* Video Cards Grid */}
-                {/* <ScrollArea className="h-96 w-full">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 pr-3">
-                  {videos.map((video) => (
-                    <VideoCard
-                      key={video.video_code} 
-                      title={video.title}
-                      thumbnail={video.thumbnail}
-                      uploader={video.uploader}
-                      id={video.video_code}
-                    />
-                  ))}
-                </div>
-          
-                </ScrollArea> */}
-                  <img src="/no-data-found.png" alt="no dtata foiund" height={20} />
+                {/* Loading state */}
+                {loading ? (
+                  <p>Loading videos...</p>
+                ) : (
+                  <ScrollArea className="h-96 w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 pr-3">
+                      {videos.map((video, index) => (
+                        <VideoCard
+                          key={video.video_code}
+                          title={
+                            video.meta_data.video_name
+                              ? video.meta_data.video_name
+                              : `Untitled Video - ${index + 1}`
+                          }
+                          thumbnail={
+                            video.meta_data.thumbnailUrl ||
+                            "https://via.placeholder.com/320x240.png?text=No+Thumbnail"
+                          }
+                          id={video.video_code}
+                          created_at={video.created_at || "Unknown"}
+                        />
+                      ))}
+                    </div>
+                  </ScrollArea>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="active">
-            <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Transcoding Jobs</h1>
-      <TranscodeJobs jobs={jobsData.job} />
-    </div>
+              <div className="container mx-auto p-6">
+                <h1 className="text-3xl font-bold mb-6">Transcoding Jobs</h1>
+                <TranscodeJobs jobs={jobsData.job} />
+              </div>
             </TabsContent>
           </Tabs>
         </main>
       </div>
       <UploadModal open={isModalOpen} onClose={handleModalClose}>
-        <VideoUpload /> 
+        <VideoUpload />
       </UploadModal>
     </Card>
   );

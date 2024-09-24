@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const accessToken = localStorage.getItem("access_token");
+const accessToken = localStorage.getItem("id_token");
 
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:3000";
