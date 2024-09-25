@@ -22,7 +22,6 @@ export function VideoCard({ title, thumbnail, id, created_at }) {
         <h3 className="text-lg font-semibold">{title}</h3>
         {created_at && (
           <p className="text-sm text-muted-foreground">
-            {" "}
             {formatDate(created_at)}
           </p>
         )}

@@ -177,23 +177,32 @@ export function Dashboard() {
                     style={{ height: "32rem" }}
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 pr-3">
-                      {videos.map((video, index) => (
-                        <VideoCard
-                          key={video.video_code}
-                          title={
-                            video.meta_data.video_name
-                              ? video.meta_data.video_name
-                              : `Untitled Video - ${index + 1}`
-                          }
-                          thumbnail={
-                            video.meta_data.thumbnailUrl ||
-                            "https://via.placeholder.com/320x240.png?text=No+Thumbnail"
-                          }
-                          id={video.video_code}
-                          created_at={video.created_at || "Unknown"}
-                        />
-                      ))}
+                      {videos.length > 0 ? (
+                        videos.map((video, index) => (
+                          <VideoCard
+                            key={video.video_code}
+                            title={
+                              video.meta_data.video_name
+                                ? video.meta_data.video_name
+                                : `Untitled Video - ${index + 1}`
+                            }
+                            thumbnail={
+                              video.meta_data.thumbnailUrl ||
+                              "https://via.placeholder.com/320x240.png?text=No+Thumbnail"
+                            }
+                            id={video.video_code}
+                            created_at={video.created_at || "Unknown"}
+                          />
+                        ))
+                      ) : (
+                        <></>
+                      )}
                     </div>
+                    {videos.length === 0 && (
+                      <div className="h-full flex items-center justify-center text-center font-bold text-2xl">
+                        No videos found
+                      </div>
+                    )}
                   </ScrollArea>
                 )}
               </div>
