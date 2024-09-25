@@ -3,6 +3,7 @@ import { message, Upload, Radio, Spin } from "antd";
 import { FileVideo, Trash2 } from "lucide-react";
 import axios from "axios";
 import { Button } from "./ui/Button";
+import api from "./api";
 
 const { Dragger } = Upload;
 
@@ -13,6 +14,20 @@ const VideoUpload = () => {
   const [transcodedFileUrl, setTranscodedFileUrl] = useState(null);
 
   const handleTranscode = async () => {
+    let url = ``;
+    let payload = {
+      video_code: uploadedFile.videoCode,
+    };
+    if (transcodeOption === "audio") {
+      url = `/video/audio`;
+    } else {
+      url = `video/resolution`;
+      payload = {
+        ...payload,
+        resolution: transcodeOption,
+      };
+    }
+
     if (!transcodeOption) {
       message.error("Please select a transcoding option!");
       return;
@@ -21,16 +36,10 @@ const VideoUpload = () => {
     setIsTranscoding(true);
 
     try {
-      const response = await axios.post(
-        `http://localhost:3000/api/v1/video/transcode`,
-        {
-          videoCode: uploadedFile.videoCode, // pass the video code
-          transcodeOption, // either 'audio' or resolution like '720p'
-        }
-      );
+      const response = await api.post(url, payload);
 
       // Assuming the response contains the transcoded file URL
-      setTranscodedFileUrl(response.data.transcodedFileUrl);
+      setTranscodedFileUrl(response.transcodedFileUrl);
       setIsTranscoding(false);
       message.success("Transcoding successful!");
     } catch (error) {
@@ -122,8 +131,9 @@ const VideoUpload = () => {
             className="mt-4"
           >
             <Radio value="audio">Convert to Audio (MP3)</Radio>
-            <Radio value="720p">Change Resolution to 720p</Radio>
-            <Radio value="480p">Change Resolution to 480p</Radio>
+            <Radio value="1280:720">Change Resolution to 720p</Radio>
+            <Radio value="640:480">Change Resolution to 480p</Radio>
+            <Radio value="320:240">Change Resolution to 240p</Radio>
           </Radio.Group>
 
           <Button

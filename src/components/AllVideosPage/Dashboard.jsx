@@ -210,7 +210,9 @@ export function Dashboard() {
             <TabsContent value="active">
               <div className="container mx-auto p-6">
                 <h1 className="text-3xl font-bold mb-6">Transcoding Jobs</h1>
-                <TranscodeJobs jobs={jobsData.job} />
+                <ScrollArea className="h-96 w-full" style={{ height: "32rem" }}>
+                  <TranscodeJobs />
+                </ScrollArea>
               </div>
             </TabsContent>
           </Tabs>
