@@ -1,53 +1,65 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "../../ui/Button"; // shadcn Button component
+import { Radio, message } from "antd";
 import { Loader } from "lucide-react"; // Icon for loader
+import api from "../../api";
+import { Button } from "../../ui/Button";
 
 const VideoDetails = () => {
   const { id } = useParams(); // Extract the video ID from the route
+  const [videoDetails, setVideoDetails] = useState(null);
   const [isTranscoding, setIsTranscoding] = useState(false);
+  const [transcodeOption, setTranscodeOption] = useState(null);
+  const [transcodedFileUrl, setTranscodedFileUrl] = useState(null);
   const [transcodeMessage, setTranscodeMessage] = useState(null);
-  const [transcodedUrl, setTranscodedUrl] = useState(null);
 
-  // API Call for Resolution Update
-  const handleResolutionTranscoding = async () => {
-    setIsTranscoding(true);
-    setTranscodeMessage("Transcoding video to higher resolution...");
+  // Fetch Video Details API Call
+  const fetchVideoById = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/video/resolution", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ video_code: id }),
-      });
-      const data = await response.json();
-      setTranscodedUrl(data.transcodedUrl);
-      setTranscodeMessage(data.message);
+      const response = await api.get(`/video/fetch/${id}`);
+      setVideoDetails(response.data);
     } catch (error) {
-      setTranscodeMessage("Error occurred while transcoding the video.");
-    } finally {
-      setIsTranscoding(false);
+      message.error("Error fetching video details.");
     }
   };
 
-  // API Call for Audio Extraction
-  const handleAudioExtraction = async () => {
+  // Handle Transcoding API Call
+  const handleTranscode = async () => {
+    if (!transcodeOption) {
+      message.error("Please select a transcoding option!");
+      return;
+    }
+
     setIsTranscoding(true);
-    setTranscodeMessage("Extracting audio from the video...");
+    let url = "";
+    let payload = {
+      video_code: videoDetails.video_code,
+    };
+
+    if (transcodeOption === "audio") {
+      url = `/video/audio`;
+    } else {
+      url = `/video/resolution`;
+      payload = {
+        ...payload,
+        resolution: transcodeOption,
+      };
+    }
+
     try {
-      const response = await fetch("http://localhost:3000/api/v1/video/audio", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ video_code: id }),
-      });
-      const data = await response.json();
-      setTranscodedUrl(data.transcodedUrl);
-      setTranscodeMessage(data.message);
-    } catch (error) {
-      setTranscodeMessage("Error occurred while extracting audio.");
-    } finally {
+      const response = await api.post(url, payload);
+      setTranscodedFileUrl(response.data.transcodedFileUrl);
       setIsTranscoding(false);
+      message.success("Transcoding successful!");
+    } catch (error) {
+      setIsTranscoding(false);
+      message.error("Transcoding failed. Please try again.");
     }
   };
+
+  useEffect(() => {
+    if (id) fetchVideoById();
+  }, [id]);
 
   return (
     <div className="container mx-auto p-6">
@@ -55,54 +67,70 @@ const VideoDetails = () => {
 
       {/* Video Player */}
       <div className="mb-6">
-        <video
-          controls
-           src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"
-          className="w-full max-w-3xl rounded-lg shadow-lg"
-        ></video>
+        {videoDetails ? (
+          <video
+            controls
+            src={videoDetails.original_file_url}
+            className="w-full max-w-3xl rounded-lg shadow-lg"
+          ></video>
+        ) : (
+          <p>Loading video...</p>
+        )}
       </div>
 
       {/* Transcoding Options */}
-      <div className="flex gap-4 mb-6">
-        <Button onClick={handleResolutionTranscoding} disabled={isTranscoding}>
-          {isTranscoding ? (
-            <span className="flex items-center gap-2">
-              <Loader className="animate-spin h-4 w-4" />
-              Transcoding...
-            </span>
-          ) : (
-            "Transcode Video (Resolution)"
-          )}
-        </Button>
-        <Button onClick={handleAudioExtraction} disabled={isTranscoding}>
-          {isTranscoding ? (
-            <span className="flex items-center gap-2">
-              <Loader className="animate-spin h-4 w-4" />
-              Extracting...
-            </span>
-          ) : (
-            "Extract Audio"
-          )}
-        </Button>
-      </div>
+      {videoDetails && (
+        <div className="transcode-options mt-8">
+          <h2 className="text-xl font-semibold mb-4">
+            Select Transcode Option
+          </h2>
 
-      {/* Transcoding Status */}
-      {transcodeMessage && (
-        <div className="mt-4 p-4 border rounded-md bg-blue-50 text-blue-600">
-          {transcodeMessage}
-          {transcodedUrl && (
-            <div className="mt-2">
-              <a
-                href={transcodedUrl}
-                className="text-blue-500 underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Transcoded File
-              </a>
+          <Radio.Group
+            onChange={(e) => setTranscodeOption(e.target.value)}
+            className="mt-4"
+          >
+            <Radio value="audio">Convert to Audio (MP3)</Radio>
+            <Radio value="1280:720">Change Resolution to 720p</Radio>
+            <Radio value="640:480">Change Resolution to 480p</Radio>
+            <Radio value="320:240">Change Resolution to 240p</Radio>
+          </Radio.Group>
+
+          {/* Transcode Button */}
+          <div className="mt-6">
+            <Button onClick={handleTranscode} disabled={isTranscoding}>
+              {isTranscoding ? (
+                <>
+                  <Loader className="inline-block mr-2" /> Transcoding...
+                </>
+              ) : (
+                "Start Transcoding"
+              )}
+            </Button>
+          </div>
+
+          {/* Show transcoded video/audio link */}
+          {transcodedFileUrl && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold">Transcoded File:</h3>
+              <p>
+                File URL:{" "}
+                <a
+                  href={transcodedFileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600"
+                >
+                  {transcodedFileUrl}
+                </a>
+              </p>
             </div>
           )}
         </div>
+      )}
+
+      {/* Display Transcoding Message */}
+      {transcodeMessage && (
+        <p className="mt-4 text-red-500">{transcodeMessage}</p>
       )}
     </div>
   );

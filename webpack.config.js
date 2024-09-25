@@ -13,6 +13,7 @@ module.exports = (env) => {
     output: {
       path: path.resolve(__dirname, "build"),
       filename: "[name].[contenthash:8].js",
+      publicPath: "/",
     },
     mode: isEnvDevelopment ? "development" : "production",
 
