@@ -79,6 +79,16 @@ const Navbar = () => {
                   >
                     Logout
                   </button>
+                  {user && user.is_superuser && (
+                    <button
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "sm",
+                      })}
+                    >
+                      Admin
+                    </button>
+                  )}
                 </div>
               </>
             )}

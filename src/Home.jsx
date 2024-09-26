@@ -58,7 +58,7 @@ const Home = () => {
               <div className="mt-16 flow-root sm:mt-24">
                 <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
                   <img
-                    src="https://picsum.photos/1364/866"
+                    src="/first-img.png"
                     alt="product preview"
                     width={1364}
                     height={866}
@@ -141,7 +141,7 @@ const Home = () => {
           <div className="mt-16 flow-root sm:mt-24">
             <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
               <img
-                src="https://picsum.photos/1419/732"
+                src="/third-videos.png"
                 alt="uploading preview"
                 width={1419}
                 height={732}
