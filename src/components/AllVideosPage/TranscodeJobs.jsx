@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../../ui/Button"; // shadcn Button
-import { Card } from "../../ui/Card"; // shadcn Card
-import { Download, Eye, ArrowRight } from "lucide-react"; // Icons from lucide-react
-import api from "../../api"; // Axios instance (adjust this import if needed)
-import { Spin } from "antd"; // Optional loading spinner
+import { Button } from "../../ui/Button"; 
+import { Card } from "../../ui/Card"; 
+import { Download, Eye, ArrowRight } from "lucide-react"; 
+import api from "../../api"; 
 import { Skeleton } from "@/ui/skeleton";
 
 const TranscodeJobs = () => {
@@ -11,7 +10,6 @@ const TranscodeJobs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch transcoded jobs from the API
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -26,6 +24,23 @@ const TranscodeJobs = () => {
 
     fetchJobs();
   }, []);
+
+  const downloadVideo = async (transcodedFileUrl) => {
+    try {
+      const response = await api.get(`/video/download/`, {
+        params: { video_url: transcodedFileUrl },
+        responseType: 'blob', 
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'video.mp4'); 
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error("Error downloading video:", err);
+    }
+  };
 
   if (loading) {
     return (
@@ -52,7 +67,6 @@ const TranscodeJobs = () => {
             className="p-4 bg-white shadow-lg rounded-lg border border-gray-200 "
           >
             <div className="flex items-center gap-6">
-              {/* Left Section: Thumbnail or Video Icon */}
               <div className="w-24 h-24 flex-shrink-0">
                 {job.video.meta_data?.thumbnailUrl ? (
                   <img
@@ -67,7 +81,6 @@ const TranscodeJobs = () => {
                 )}
               </div>
 
-              {/* Middle Section: Job Details */}
               <div className="flex-grow">
                 <h3 className="text-lg font-bold text-gray-800">
                   {job.video.meta_data?.video_name || "Untitled Video"}
@@ -87,9 +100,7 @@ const TranscodeJobs = () => {
                 </div>
               </div>
 
-              {/* Right Section: Buttons */}
               <div className="flex gap-3">
-                {/* View Button */}
                 <Button
                   size="sm"
                   variant="outline"
@@ -106,20 +117,13 @@ const TranscodeJobs = () => {
                   </a>
                 </Button>
 
-                {/* Download Button */}
                 <Button
                   size="sm"
                   variant="default"
-                  asChild
                   className="flex items-center gap-1"
+                  onClick={() => downloadVideo(job.transcoded_file_url)}
                 >
-                  <a
-                    href={job.transcoded_file_url}
-                    download
-                    className="flex items-center gap-2"
-                  >
-                    <Download className="h-4 w-4" /> Download
-                  </a>
+                  <Download className="h-4 w-4" /> Download
                 </Button>
               </div>
             </div>
