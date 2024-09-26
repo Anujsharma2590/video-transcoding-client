@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/Button";
 import { ArrowRight } from "lucide-react";
-
+import { AuthContext } from "./AuthContext";
+const COGNITO_LOGIN_URL = process.env.REACT_APP_COGNITO_LOGIN_URL || "";
 const Home = () => {
+  const {isAuthenticated} = useContext(AuthContext);
   return (
     <>
       <MaxWidthWrapper className=" mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
@@ -27,8 +29,7 @@ const Home = () => {
             className: "mt-5",
             
           })}
-          href="/dashboard"
-          target="_blank"
+          href={isAuthenticated ? "/dashboard" : COGNITO_LOGIN_URL}
           rel="noopener noreferrer"
 
         >
