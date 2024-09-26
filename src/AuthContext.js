@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
 
-// Create the AuthContext
-export const AuthContext = createContext();
+export const AuthContext = createContext({
+  isLoading: false,
+});
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("id_token") ? true : false
+  );
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -18,7 +20,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // Check if tokens are already in localStorage
       const accessToken = localStorage.getItem("access_token");
       const idToken = localStorage.getItem("id_token");
 
@@ -45,21 +46,9 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("access_token", newAccessToken);
             localStorage.setItem("id_token", newIdToken);
 
-            // Fetch user profile after login
-            fetchUserProfile(newIdToken)
-              .then(() => {
-                setIsAuthenticated(true);
-                toast.success("Login successful!");
-                window.history.replaceState(
-                  null,
-                  null,
-                  window.location.pathname
-                ); // Clean the URL
-              })
-              .catch((error) => {
-                console.error("Error fetching user profile on login:", error);
-                logout();
-              });
+            setIsAuthenticated(true);
+            toast.success("Login successful!");
+            window.history.replaceState(null, null, window.location.pathname);
           }
         }
         setIsLoading(false);
@@ -101,7 +90,6 @@ export const AuthProvider = ({ children }) => {
     // Store tokens in localStorage
     localStorage.setItem("access_token", newAccessToken);
     localStorage.setItem("id_token", newIdToken);
-
     // Fetch user profile after login
     fetchUserProfile(newIdToken).then(() => {
       setIsAuthenticated(true);
@@ -109,12 +97,10 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Show loading state while checking local storage
-  }
-
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, logout, login }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, logout, login, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

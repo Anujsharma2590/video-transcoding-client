@@ -1,18 +1,22 @@
-import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
+import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
-// PrivateRoute component
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  console.log(isAuthenticated)
-
-  if (!isAuthenticated) {
-    return <Navigate to="/" />; // Redirect to home if not authenticated
+  // If still loading, show a loading spinner or placeholder
+  if (isLoading) {
+    return <div>Loading...</div>; // Customize this to match your UI
   }
 
-  return children; // Render protected component if authenticated
+  // If not authenticated, redirect to the login page
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
+  // Otherwise, allow access to the protected component
+  return children;
 };
 
 export default PrivateRoute;

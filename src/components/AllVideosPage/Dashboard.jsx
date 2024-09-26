@@ -1,5 +1,5 @@
 import { File, ListFilter, PlusCircle, Search } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -20,52 +20,15 @@ import { UploadModal } from "../UploadModal";
 import TranscodeJobs from "./TranscodeJobs";
 import api from "../../api.js";
 import { Skeleton } from "../../ui/skeleton";
-
-const jobsData = {
-  count: 2,
-  job: [
-    {
-      target_format: "Extract Audio from Video",
-      transcoded_file_url:
-        "https://mypocbucket-testing.s3.ap-south-1.amazonaws.com/video/1/vid_8aw6d99u",
-      status: "completed",
-      created_at: "2024-09-20T12:45:18.000Z",
-      updated_at: "2024-09-20T12:45:18.000Z",
-      video: {
-        video_code: "vid_8aw60vpl",
-        original_file_url:
-          "https://mypocbucket-testing.s3.ap-south-1.amazonaws.com/video/1/vid_8aw60vpl",
-        user: {
-          email: "rahul.aggarwal@travclan.com",
-        },
-      },
-    },
-    {
-      target_format: "Resolution Update",
-      transcoded_file_url:
-        "https://mypocbucket-testing.s3.ap-south-1.amazonaws.com/video/1/vid_8aw68k6u",
-      status: "completed",
-      created_at: "2024-09-20T12:40:04.000Z",
-      updated_at: "2024-09-20T12:40:04.000Z",
-      video: {
-        video_code: "vid_8aw60vpl",
-        original_file_url:
-          "https://mypocbucket-testing.s3.ap-south-1.amazonaws.com/video/1/vid_8aw60vpl",
-        user: {
-          email: "rahul.aggarwal@travclan.com",
-        },
-      },
-    },
-  ],
-};
+import { AuthContext } from "../../AuthContext";
 
 export function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
-    // Fetch videos from API
     const fetchVideos = async () => {
       try {
         const response = await api.get("/video/fetch");
@@ -77,9 +40,10 @@ export function Dashboard() {
         setLoading(false);
       }
     };
-
-    fetchVideos();
-  }, []);
+    if (isAuthenticated) {
+      fetchVideos();
+    }
+  }, [isAuthenticated]);
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
