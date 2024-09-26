@@ -6,7 +6,7 @@ import api from "./api";
 
 const { Dragger } = Upload;
 
-const VideoUpload = ({onTranscodingComplete}) => {
+const VideoUpload = ({ onTranscodingComplete }) => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [transcodeOption, setTranscodeOption] = useState(null);
   const [isTranscoding, setIsTranscoding] = useState(false);
@@ -40,7 +40,7 @@ const VideoUpload = ({onTranscodingComplete}) => {
       setTranscodedFileUrl(response.transcodedFileUrl);
       setIsTranscoding(false);
       message.success("Transcoding successful!");
-      onTranscodingComplete(); 
+      onTranscodingComplete();
     } catch (error) {
       setIsTranscoding(false);
       message.error("Transcoding failed. Please try again.");
@@ -73,101 +73,107 @@ const VideoUpload = ({onTranscodingComplete}) => {
   };
 
   return (
-    <div className="mb-12 mt-12">
-      {!uploadedFile && (
-        <Dragger {...uploadProps}>
-          <div className="flex flex-col items-center justify-center space-y-4 p-6 border-2 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-all">
-            <FileVideo size={60} className="text-blue-500" />
-            <p className="text-lg font-semibold text-gray-700">
-              Upload Your Video
-            </p>
-            <p className="text-sm text-gray-500">
-              Drag and drop, or <span className="text-blue-500">browse</span>{" "}
-              your video files.
-            </p>
-            <p className="text-xs text-gray-400">
-              We support MP4, AVI, MKV formats. Max file size: 5GB.
-            </p>
-          </div>
-        </Dragger>
+    <>
+      {isTranscoding && (
+        <div className="flex justify-center mt-4">
+          <Spin tip="Transcoding... Please wait" size="large" />
+        </div>
       )}
-
-      {uploadedFile && (
-        <>
-          <div className="mt-6 p-4 border rounded-lg bg-gray-50">
-            <h3 className="text-lg font-semibold">Uploaded Video</h3>
-            <div className="flex items-start space-x-4 mt-4">
-              <img
-                src={uploadedFile.metaData?.thumbnailURL}
-                alt="Video Thumbnail"
-                className="w-48 h-28 object-cover rounded-lg"
-              />
-              <div>
-                <p>
-                  <strong>Name:</strong> {uploadedFile.metaData?.videoName}
-                </p>
-                <p>
-                  <strong>Size:</strong>{" "}
-                  {(uploadedFile.metaData?.size / (1024 * 1024)).toFixed(2)} MB
-                </p>
-
-                {/* Delete button to remove the uploaded video */}
-                <Button
-                  variant="destructive"
-                  className="mt-4"
-                  onClick={() => {}}
-                >
-                  <Trash2 className="mr-2" /> Delete Video
-                </Button>
-              </div>
-            </div>
-          </div>
-          <h3 className="text-lg font-semibold mt-6">
-            Select Transcode Option
-          </h3>
-          <Radio.Group
-            onChange={(e) => setTranscodeOption(e.target.value)}
-            className="mt-4"
-          >
-            <Radio value="audio">Convert to Audio (MP3)</Radio>
-            <Radio value="1280:720">Change Resolution to 720p</Radio>
-            <Radio value="640:480">Change Resolution to 480p</Radio>
-            <Radio value="320:240">Change Resolution to 240p</Radio>
-          </Radio.Group>
-
-          <Button
-            className="mt-6"
-            onClick={handleTranscode}
-            disabled={!transcodeOption || isTranscoding}
-          >
-            {isTranscoding ? "Transcoding..." : "Start Transcoding"}
-          </Button>
-
-          {isTranscoding && (
-            <div className="flex justify-center mt-4">
-              <Spin tip="Transcoding... Please wait" size="large" />
-            </div>
-          )}
-
-          {/* Show transcoded file once done */}
-          {transcodedFileUrl && (
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold">Transcoded Video:</h3>
-              <p>
-                File URL:{" "}
-                <a
-                  href={transcodedFileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {transcodedFileUrl}
-                </a>
+      <div
+        className={`mb-12 mt-12 ${
+          isTranscoding ? "blur-sm pointer-events-none" : ""
+        }`}
+      >
+        {!uploadedFile && (
+          <Dragger {...uploadProps}>
+            <div className="flex flex-col items-center justify-center space-y-4 p-6 border-2 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-all">
+              <FileVideo size={60} className="text-blue-500" />
+              <p className="text-lg font-semibold text-gray-700">
+                Upload Your Video
+              </p>
+              <p className="text-sm text-gray-500">
+                Drag and drop, or <span className="text-blue-500">browse</span>{" "}
+                your video files.
+              </p>
+              <p className="text-xs text-gray-400">
+                We support MP4, AVI, MKV formats. Max file size: 5GB.
               </p>
             </div>
-          )}
-        </>
-      )}
-    </div>
+          </Dragger>
+        )}
+
+        {uploadedFile && (
+          <>
+            <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+              <h3 className="text-lg font-semibold">Uploaded Video</h3>
+              <div className="flex items-start space-x-4 mt-4">
+                <img
+                  src={uploadedFile.metaData?.thumbnailURL}
+                  alt="Video Thumbnail"
+                  className="w-48 h-28 object-cover rounded-lg"
+                />
+                <div>
+                  <p>
+                    <strong>Name:</strong> {uploadedFile.metaData?.videoName}
+                  </p>
+                  <p>
+                    <strong>Size:</strong>{" "}
+                    {(uploadedFile.metaData?.size / (1024 * 1024)).toFixed(2)}{" "}
+                    MB
+                  </p>
+
+                  {/* Delete button to remove the uploaded video */}
+                  <Button
+                    variant="destructive"
+                    className="mt-4"
+                    onClick={() => {}}
+                  >
+                    <Trash2 className="mr-2" /> Delete Video
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold mt-6">
+              Select Transcode Option
+            </h3>
+            <Radio.Group
+              onChange={(e) => setTranscodeOption(e.target.value)}
+              className="mt-4"
+            >
+              <Radio value="audio">Convert to Audio (MP3)</Radio>
+              <Radio value="1280:720">Change Resolution to 720p</Radio>
+              <Radio value="640:480">Change Resolution to 480p</Radio>
+              <Radio value="320:240">Change Resolution to 240p</Radio>
+            </Radio.Group>
+
+            <Button
+              className="mt-6"
+              onClick={handleTranscode}
+              disabled={!transcodeOption || isTranscoding}
+            >
+              {isTranscoding ? "Transcoding..." : "Start Transcoding"}
+            </Button>
+
+            {/* Show transcoded file once done */}
+            {transcodedFileUrl && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold">Transcoded Video:</h3>
+                <p>
+                  File URL:{" "}
+                  <a
+                    href={transcodedFileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {transcodedFileUrl}
+                  </a>
+                </p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

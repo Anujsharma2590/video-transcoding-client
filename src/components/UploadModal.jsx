@@ -5,9 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogClose,
-} from "../ui/dialog"; // Adjust path if needed
-import { Button } from "../ui/Button";
+} from "../ui/dialog"; 
 
 export const UploadModal = ({ open, onClose, children }) => {
   return (
@@ -21,11 +19,11 @@ export const UploadModal = ({ open, onClose, children }) => {
         </DialogHeader>
         {children}{" "}
         {/* This will be where the upload component will be inserted */}
-        <div className="flex justify-end mt-4">
+        {/* <div className="flex justify-end mt-4">
           <DialogClose asChild>
             <Button>Close</Button>
           </DialogClose>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );
