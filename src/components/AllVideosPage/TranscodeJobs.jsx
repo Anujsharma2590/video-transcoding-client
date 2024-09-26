@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../../ui/Button"; 
 import { Card } from "../../ui/Card"; 
-import { Download, Eye, ArrowRight } from "lucide-react"; 
+import { Download, Eye, ArrowRight, Loader, CheckCircle, XCircle, Clock } from "lucide-react"; 
 import api from "../../api"; 
-import { Skeleton } from "@/ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 const TranscodeJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -39,6 +39,21 @@ const TranscodeJobs = () => {
       link.click();
     } catch (err) {
       console.error("Error downloading video:", err);
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "pending":
+        return <Clock className="text-yellow-500 h-5 w-5" />;
+      case "processing":
+        return <Loader className="text-blue-500 h-5 w-5 animate-spin" />;
+      case "completed":
+        return <CheckCircle className="text-green-500 h-5 w-5" />;
+      case "failed":
+        return <XCircle className="text-red-500 h-5 w-5" />;
+      default:
+        return null;
     }
   };
 
@@ -100,33 +115,43 @@ const TranscodeJobs = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  asChild
-                  className="flex items-center gap-1"
-                >
-                  <a
-                    href={job.transcoded_file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="h-4 w-4" /> View
-                  </a>
-                </Button>
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center gap-1">
+                  {getStatusIcon(job.status)}
+                  <span className="text-sm font-semibold capitalize">
+                    {job.status}
+                  </span>
+                </div>
 
-                <Button
-                  size="sm"
-                  variant="default"
-                  className="flex items-center gap-1"
-                  onClick={() => downloadVideo(job.transcoded_file_url)}
-                >
-                  <Download className="h-4 w-4" /> Download
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    asChild
+                    className="flex items-center gap-1"
+                  >
+                    <a
+                      href={job.transcoded_file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" /> View
+                    </a>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="default"
+                    className="flex items-center gap-1"
+                    onClick={() => downloadVideo(job.transcoded_file_url)}
+                  >
+                    <Download className="h-4 w-4" /> Download
+                  </Button>
+                </div>
               </div>
             </div>
+       
           </Card>
         ))
       )}
