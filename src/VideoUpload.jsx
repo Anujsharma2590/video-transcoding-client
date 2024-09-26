@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { message, Upload, Radio, Spin } from "antd";
 import { FileVideo, Trash2 } from "lucide-react";
-import axios from "axios";
 import { Button } from "./ui/Button";
 import api from "./api";
 
 const { Dragger } = Upload;
 
-const VideoUpload = () => {
+const VideoUpload = ({onTranscodingComplete}) => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [transcodeOption, setTranscodeOption] = useState(null);
   const [isTranscoding, setIsTranscoding] = useState(false);
@@ -38,10 +37,10 @@ const VideoUpload = () => {
     try {
       const response = await api.post(url, payload);
 
-      // Assuming the response contains the transcoded file URL
       setTranscodedFileUrl(response.transcodedFileUrl);
       setIsTranscoding(false);
       message.success("Transcoding successful!");
+      onTranscodingComplete(); 
     } catch (error) {
       setIsTranscoding(false);
       message.error("Transcoding failed. Please try again.");

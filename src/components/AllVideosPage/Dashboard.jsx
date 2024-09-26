@@ -1,13 +1,13 @@
-import { File, ListFilter, PlusCircle, Search } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import React, { useState, useEffect, useContext } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuCheckboxItem,
+//   DropdownMenuContent,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "../../ui/dropdown-menu";
 
 import { Card } from "../../ui/Card";
 import { Input } from "../../ui/Input";
@@ -26,6 +26,7 @@ export function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
   const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
@@ -53,29 +54,34 @@ export function Dashboard() {
     setIsModalOpen(false);
   };
 
+  const handleTranscodingComplete = () => {
+    setIsModalOpen(false); 
+    setActiveTab('active'); 
+  };
+
   return (
     <Card className="flex min-h-100 w-full flex-col bg-muted/40 mt-10">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:px-8">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <div className="font-semibold">Video Transcoder Dashboard</div>
-          <div className="relative ml-auto flex-1 md:grow-0">
+          <div className="font-semibold text-2xl">Dashboard</div>
+          {/* <div className="relative ml-auto flex-1 md:grow-0">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search videos..."
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
-          </div>
+          </div> */}
         </header>
         <main className="flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <Tabs defaultValue="all">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <div className="flex items-center">
               <TabsList>
                 <TabsTrigger value="all">All Videos</TabsTrigger>
                 <TabsTrigger value="active">Transcoding Jobs</TabsTrigger>
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
-                <DropdownMenu>
+                {/* <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-1">
                       <ListFilter className="h-3.5 w-3.5" />
@@ -94,13 +100,7 @@ export function Dashboard() {
                       Completed
                     </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
-                <Button variant="outline" className="gap-1">
-                  <File className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Export
-                  </span>
-                </Button>
+                </DropdownMenu> */}
                 <Button className="gap-1" onClick={handleModalOpen}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -185,8 +185,8 @@ export function Dashboard() {
           </Tabs>
         </main>
       </div>
-      <UploadModal open={isModalOpen} onClose={handleModalClose}>
-        <VideoUpload />
+      <UploadModal  open={isModalOpen} onClose={handleModalClose}>
+        <VideoUpload  onTranscodingComplete={handleTranscodingComplete} />
       </UploadModal>
     </Card>
   );
