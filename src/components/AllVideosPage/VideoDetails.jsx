@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Loader, Video } from "lucide-react"; 
+import { useParams, useNavigate } from "react-router-dom";
+import { Loader, Video, ArrowLeft } from "lucide-react";
 import api from "../../api";
 import { Button } from "../../ui/Button";
 import { Card, CardHeader, CardContent } from "../../ui/Card";
 
 const VideoDetails = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [videoDetails, setVideoDetails] = useState(null);
   const [isTranscoding, setIsTranscoding] = useState(false);
   const [transcodeOption, setTranscodeOption] = useState(null);
   const [transcodedFileUrl, setTranscodedFileUrl] = useState(null);
-
+  const navigate = useNavigate();
   const fetchVideoById = async () => {
     try {
       const response = await api.get(`/video/fetch/${id}`);
@@ -25,7 +25,8 @@ const VideoDetails = () => {
     if (!transcodeOption) return;
 
     setIsTranscoding(true);
-    let url = transcodeOption === "audio" ? `/video/audio` : `/video/resolution`;
+    let url =
+      transcodeOption === "audio" ? `/video/audio` : `/video/resolution`;
     let payload = { video_code: videoDetails.video_code };
 
     if (transcodeOption !== "audio") {
@@ -48,11 +49,21 @@ const VideoDetails = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-6">Video Transcoder</h1>
+      <div className="flex items-center">
 
-      {/* Main Content Row */}
+
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center mb-4 "
+        >
+          <ArrowLeft size={40} className="mr-2" />
+        </button>
+        <h1 className="text-4xl font-bold mb-6">
+        Video Transcoder
+      </h1>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Original Video */}
         {videoDetails ? (
           <Card>
             <CardHeader className="flex items-center">
@@ -73,7 +84,6 @@ const VideoDetails = () => {
           </div>
         )}
 
-        {/* Transcoded Video */}
         {isTranscoding ? (
           <div className="flex justify-center items-center h-64">
             <Loader className="animate-spin h-8 w-8 text-gray-600" />
@@ -119,31 +129,66 @@ const VideoDetails = () => {
         )}
       </div>
 
-      {/* Transcode Options */}
       {videoDetails && (
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Select Transcode Option</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Select Transcode Option
+          </h2>
 
           <div className="flex flex-col space-y-4">
-            <Button variant="outline" onClick={() => setTranscodeOption("audio")}>
-              Convert to Audio (MP3)
-            </Button>
-            <Button variant="outline" onClick={() => setTranscodeOption("1280:720")}>
-              Change Resolution to 720p
-            </Button>
-            <Button variant="outline" onClick={() => setTranscodeOption("640:480")}>
-              Change Resolution to 480p
-            </Button>
-            <Button variant="outline" onClick={() => setTranscodeOption("320:240")}>
-              Change Resolution to 240p
-            </Button>
+            <div className="space-y-2">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="transcodeOption"
+                  value="audio"
+                  checked={transcodeOption === "audio"}
+                  onChange={() => setTranscodeOption("audio")}
+                />
+                <span>Convert to Audio (MP3)</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="transcodeOption"
+                  value="1280:720"
+                  checked={transcodeOption === "1280:720"}
+                  onChange={() => setTranscodeOption("1280:720")}
+                />
+                <span>Change Resolution to 720p</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="transcodeOption"
+                  value="640:480"
+                  checked={transcodeOption === "640:480"}
+                  onChange={() => setTranscodeOption("640:480")}
+                />
+                <span>Change Resolution to 480p</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="transcodeOption"
+                  value="320:240"
+                  checked={transcodeOption === "320:240"}
+                  onChange={() => setTranscodeOption("320:240")}
+                />
+                <span>Change Resolution to 240p</span>
+              </label>
+            </div>
           </div>
 
           <div className="mt-6">
-            <Button onClick={handleTranscode} disabled={isTranscoding}>
+            <Button
+              onClick={handleTranscode}
+              disabled={isTranscoding || !transcodeOption}
+            >
               {isTranscoding ? (
                 <>
-                  <Loader className="inline-block mr-2 animate-spin" /> Transcoding...
+                  <Loader className="inline-block mr-2 animate-spin" />{" "}
+                  Transcoding...
                 </>
               ) : (
                 "Start Transcoding"
