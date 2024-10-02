@@ -6,6 +6,9 @@ import api from "./api";
 
 const { Dragger } = Upload;
 
+const API_BASE_URL =
+process.env.REACT_APP_API_BASE_URL || "http://localhost:3000";
+
 const VideoUpload = ({ onTranscodingComplete }) => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [transcodeOption, setTranscodeOption] = useState(null);
@@ -65,7 +68,7 @@ const VideoUpload = ({ onTranscodingComplete }) => {
   const uploadProps = {
     name: "video",
     multiple: false,
-    action: "http://localhost:3000/api/v1/video/upload",
+    action: `${API_BASE_URL}/api/v1/video/upload`,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("id_token")}`,
     },
