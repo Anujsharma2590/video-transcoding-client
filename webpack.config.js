@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const webpack = require("webpack");
 const Dotenv = require("dotenv-webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = (env) => {
   const isEnvDevelopment = env === "development";
@@ -57,6 +58,11 @@ module.exports = (env) => {
         template: path.join(__dirname, "public", "index.html"),
       }),
       new Dotenv(),
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: "public", to: "" }, 
+        ],
+      }),
     ],
     optimization: {
       splitChunks: {
