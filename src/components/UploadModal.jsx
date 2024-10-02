@@ -18,12 +18,6 @@ export const UploadModal = ({ open, onClose, children }) => {
           </DialogDescription>
         </DialogHeader>
         {children}{" "}
-        {/* This will be where the upload component will be inserted */}
-        {/* <div className="flex justify-end mt-4">
-          <DialogClose asChild>
-            <Button>Close</Button>
-          </DialogClose>
-        </div> */}
       </DialogContent>
     </Dialog>
   );

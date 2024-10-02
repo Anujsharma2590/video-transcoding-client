@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { message, Upload, Radio, Spin } from "antd";
+import { message, Upload, Radio, Spin, Modal } from "antd";
 import { FileVideo, Trash2 } from "lucide-react";
 import { Button } from "./ui/Button";
 import api from "./api";
@@ -45,6 +45,21 @@ const VideoUpload = ({ onTranscodingComplete }) => {
       setIsTranscoding(false);
       message.error("Transcoding failed. Please try again.");
     }
+  };
+
+  const handleDelete = async () => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this video?",
+      onOk: async () => {
+        try {
+          await api.delete(`/video/delete/${uploadedFile.videoCode}`);
+          message.success("Video deleted successfully.");
+          setUploadedFile(null); 
+        } catch (error) {
+          message.error("Failed to delete the video. Please try again.");
+        }
+      },
+    });
   };
 
   const uploadProps = {
@@ -122,17 +137,17 @@ const VideoUpload = ({ onTranscodingComplete }) => {
                     MB
                   </p>
 
-                  {/* Delete button to remove the uploaded video */}
                   <Button
                     variant="destructive"
                     className="mt-4"
-                    onClick={() => {}}
+                    onClick={handleDelete} 
                   >
                     <Trash2 className="mr-2" /> Delete Video
                   </Button>
                 </div>
               </div>
             </div>
+
             <h3 className="text-lg font-semibold mt-6">
               Select Transcode Option
             </h3>
