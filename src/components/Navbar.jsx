@@ -21,7 +21,7 @@ const Navbar = () => {
           <div className="hidden items-center space-x-4 sm:flex">
             {!isAuthenticated ? (
               <>
-                {/* <a
+                <a
                   href="/pricing"
                   className={buttonVariants({
                     variant: "ghost",
@@ -29,7 +29,7 @@ const Navbar = () => {
                   })}
                 >
                   Pricing
-                </a> */}
+                </a>
                 {/* Sign in (Cognito) */}
                 <a
                   href={COGNITO_LOGIN_URL}

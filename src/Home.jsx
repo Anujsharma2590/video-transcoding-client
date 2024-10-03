@@ -3,6 +3,8 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/Button";
 import { ArrowRight } from "lucide-react";
 import { AuthContext } from "./AuthContext";
+import FooterPage from "./components/FooterPage";
+
 const COGNITO_LOGIN_URL = process.env.REACT_APP_COGNITO_LOGIN_URL || "";
 const Home = () => {
   const {isAuthenticated} = useContext(AuthContext);
@@ -152,6 +154,8 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      <FooterPage />
     </>
   );
 };

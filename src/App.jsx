@@ -9,6 +9,7 @@ import VideoDetails from "./components/AllVideosPage/VideoDetails.jsx";
 import { AuthProvider } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute";
 import { Toaster } from "sonner"; // Import Toaster from sonner
+import Pricing from "./components/Pricing.jsx";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Routes>
           {/* Public route */}
           <Route path="/" element={<Home />} />
+          <Route path="/pricing" element={<Pricing />} />
 
           {/* Protected routes */}
           <Route
